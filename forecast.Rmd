@@ -1,0 +1,30 @@
+---
+title: "forecast"
+output: html_document
+---
+
+```{r}
+gflu = read.csv("http://www.google.org/flutrends/about/data/flu/us/data.txt", skip = 11)
+
+#make Mass flu cases into a time series
+y = ts(gflu$Massachusetts)
+
+plot(log10(y + 1), xlim = c(540, 640)) 
+lines(log10(forecast$pred + 1), col = "blue")
+arima_model = arima(y, order = c(3, 0, 1)) #models with time lags
+forecast = predict(arima_model, n.ahead = 10)
+
+
+dev.off()
+
+predictions <- data.frame(time = time(forecast$pred),
+                          prediction = forecast$pred,
+                          se = forecast$se)
+write.csv(predictions, "flu_predictions.csv")
+
+#Continuous analysis Beaulieu-Jones & Green 2017
+#zenodo - saves forecasts
+
+
+```
+
